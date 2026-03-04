@@ -24,6 +24,7 @@ class ItemDTO(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
     tags: list[TagInItemDTO] = []
+        due_date: datetime | None = None
 
 
 class ItemCreateDTO(BaseModel):
@@ -32,6 +33,7 @@ class ItemCreateDTO(BaseModel):
     name: str
     description: str | None = None
     tag_ids: list[int] = []
+        due_date: datetime | None = None
 
 
 class ItemUpdateDTO(BaseModel):
@@ -40,3 +42,13 @@ class ItemUpdateDTO(BaseModel):
     name: str | None = None
     description: str | None = None
     tag_ids: list[int] | None = None
+        due_date: datetime | None = None
+
+def __str__(self) -> str:
+    """String representation of ItemDTO"""
+    tags_str = "\n".join(f"  - {tag.name} ({tag.color})" for tag in self.tags)
+    return (
+        f"Item(id={self.id}, name={self.name}, "
+        f"description={self.description}, created_at={self.created_at}, "
+        f"updated_at={self.updated_at})\nTags:\n{tags_str}"
+    )
