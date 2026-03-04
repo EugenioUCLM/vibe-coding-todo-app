@@ -5,6 +5,35 @@ import TaskCard from "./TaskCard";
 import { mockItems } from "../test/mock-data";
 
 describe("TaskCard", () => {
+    it("muestra la fecha de vencimiento en rojo si faltan menos de 24h", () => {
+      const now = new Date();
+      const dueSoon = new Date(now.getTime() + 23 * 60 * 60 * 1000).toISOString();
+      const item = { ...defaultProps.item, due_date: dueSoon };
+      render(<TaskCard {...defaultProps} item={item} />);
+      const dueDate = screen.getByTestId(`due-date-${item.id}`);
+      expect(dueDate).toHaveClass("bg-rose-100");
+      expect(dueDate.textContent).toContain("Vence");
+    });
+
+    it("muestra la fecha de vencimiento en naranja si faltan menos de una semana", () => {
+      const now = new Date();
+      const dueWeek = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString();
+      const item = { ...defaultProps.item, due_date: dueWeek };
+      render(<TaskCard {...defaultProps} item={item} />);
+      const dueDate = screen.getByTestId(`due-date-${item.id}`);
+      expect(dueDate).toHaveClass("bg-orange-100");
+      expect(dueDate.textContent).toContain("Vence");
+    });
+
+    it("muestra la fecha de vencimiento en gris si faltan más de una semana", () => {
+      const now = new Date();
+      const dueLater = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString();
+      const item = { ...defaultProps.item, due_date: dueLater };
+      render(<TaskCard {...defaultProps} item={item} />);
+      const dueDate = screen.getByTestId(`due-date-${item.id}`);
+      expect(dueDate).toHaveClass("bg-slate-100");
+      expect(dueDate.textContent).toContain("Vence");
+    });
   const defaultProps = {
     item: mockItems.simple,
     onDelete: vi.fn(),

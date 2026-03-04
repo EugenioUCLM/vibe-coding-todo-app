@@ -14,6 +14,25 @@ export default function TaskCard({
   onEdit,
   onDragStart,
 }: TaskCardProps) {
+  // Lógica de color para fecha de vencimiento
+  let dueDateColor = "";
+  let dueDateText = "";
+  if (item.due_date) {
+    const now = new Date();
+    const due = new Date(item.due_date);
+    const diffMs = due.getTime() - now.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    if (diffHours < 24) {
+      dueDateColor = "bg-rose-100 text-rose-700 border-rose-300";
+    } else if (diffDays < 7) {
+      dueDateColor = "bg-orange-100 text-orange-700 border-orange-300";
+    } else {
+      dueDateColor = "bg-slate-100 text-slate-600 border-slate-300";
+    }
+    dueDateText = `Vence: ${due.toLocaleDateString()}`;
+  }
+
   return (
     <article
       data-testid={`task-${item.id}`}
@@ -26,6 +45,14 @@ export default function TaskCard({
           <h3 className="text-sm font-medium text-slate-800">{item.name}</h3>
           {item.description && (
             <p className="mt-1 text-xs text-slate-500">{item.description}</p>
+          )}
+          {item.due_date && (
+            <span
+              className={`inline-block mt-2 px-2 py-1 text-xs rounded border ${dueDateColor}`}
+              data-testid={`due-date-${item.id}`}
+            >
+              {dueDateText}
+            </span>
           )}
           {item.tags && item.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">

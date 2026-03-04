@@ -19,6 +19,38 @@ from tests.items.application.fixtures import (
 
 
 class TestGetItemUseCase:
+    class TestCreateItemUseCase:
+        """Test CreateItemUseCase"""
+
+        @pytest.mark.asyncio
+        async def test_create_item_with_due_date(self):
+            mock_repo = AsyncMock()
+            due_date = "2026-03-05T12:00:00"
+            dto = create_item_create_dto(name="Test", due_date=due_date)
+            entity = create_item_entity(id=1, name="Test", due_date=due_date)
+            mock_repo.create.return_value = entity
+            use_case = CreateItemUseCase(mock_repo)
+            result = await use_case.execute(dto)
+            assert result.due_date == due_date
+            mock_repo.create.assert_called_once()
+
+    class TestUpdateItemUseCase:
+        """Test UpdateItemUseCase"""
+
+        @pytest.mark.asyncio
+        async def test_update_item_due_date(self):
+            mock_repo = AsyncMock()
+            due_date = "2026-03-10T12:00:00"
+            entity = create_item_entity(id=1, name="Test", due_date=None)
+            updated_entity = create_item_entity(id=1, name="Test", due_date=due_date)
+            mock_repo.get_by_id.return_value = entity
+            mock_repo.update.return_value = updated_entity
+            use_case = UpdateItemUseCase(mock_repo)
+            dto = create_item_update_dto(due_date=due_date)
+            result = await use_case.execute(1, dto)
+            assert result.due_date == due_date
+            mock_repo.get_by_id.assert_called_once_with(1)
+            mock_repo.update.assert_called_once()
     """Test GetItemUseCase"""
 
     @pytest.mark.asyncio
